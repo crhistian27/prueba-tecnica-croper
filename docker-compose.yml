@@ -1,0 +1,25 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: croper-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    ports:
+      # Solo expuesto en localhost, no en la red (buena práctica de seguridad)
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # api: se agrega en el Paso 1 (backend/Dockerfile)
+  # web: se agrega en el Paso 2 (frontend/Dockerfile)
+
+volumes:
+  mongo-data:
