@@ -81,7 +81,7 @@ flowchart TB
 | Servicio | Responsabilidad | Datos | Por qué separarlo |
 |---|---|---|---|
 | **Identidad** | Login, registro, roles (comprador, vendedor, admin, soporte), MFA | Proveedor OIDC gestionado | Se compra, no se construye: es crítico y estándar |
-| **Catálogo** | Productos, categorías, atributos por tipo (NPK de un fertilizante ≠ medidas de una herramienta), registro ICA, fichas técnicas | **MongoDB**: esquema flexible por categoría | Muchas lecturas y pocas escrituras; esquema heterogéneo |
+| **Catálogo** | Productos, categorías, atributos distintos por tipo (la fórmula NPK de un fertilizante frente a las medidas de una herramienta), registro ICA, fichas técnicas | **MongoDB**: esquema flexible por categoría | Muchas lecturas y pocas escrituras; esquema heterogéneo |
 | **Búsqueda** | Texto libre, sinónimos regionales ("abono" ↔ "fertilizante", "urea" ↔ "nitrógeno"), tolerancia a errores de escritura, filtros | **OpenSearch**, alimentado por eventos | Carga y tecnología distintas; escala independiente en temporada |
 | **Inventario** | Existencias por bodega, **reservas con expiración** | **PostgreSQL** (transacciones, bloqueo optimista) | La consistencia de stock es crítica; evita la sobreventa en picos |
 | **Precios y promociones** | Precio por región y volumen, descuentos de temporada, cupones | PostgreSQL / Redis | Cambia seguido; reglas de negocio propias |

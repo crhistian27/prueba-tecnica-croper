@@ -6,6 +6,13 @@
 |---|---|
 | Claude Code (Anthropic) | Análisis de la prueba, planificación, generación y revisión de código |
 
+## Enfoque
+
+- **Decisiones mías:** el stack del frontend (Angular + NgRx), usar Docker, el orden de los ejercicios, pedir el rediseño visual, los botones para copiar las credenciales demo y corregir el usuario de MongoDB antes de continuar.
+- **Trabajo de la IA:** generó el código, los tests y los borradores de los documentos.
+- **Regla de trabajo:** nada se dio por bueno sin evidencia: tests automatizados, pruebas en el navegador, `curl` contra la API en ejecución y mediciones con Lighthouse.
+- **Errores encontrados en el camino:** varios eran errores de la propia IA o de herramientas generadas (ver la tabla final). Se corrigieron y se documentaron, en lugar de ocultarlos.
+
 ## Registro de prompts relevantes
 
 Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y qué se corrigió.
@@ -58,6 +65,16 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 - **Validación y ajustes propios:**
   - Los diagramas se renderizaron con mermaid-cli para validar la sintaxis **y revisarlos visualmente**. El primero era técnicamente válido pero ilegible (flechas cruzadas y etiquetas superpuestas), así que se rediseñó por capas.
   - Los supuestos de negocio quedaron explícitos en lugar de presentarse como hechos sobre la empresa.
+
+### 9. Entrega (Paso 6)
+- **Prompt:** "Sí, seguimos" (README final, PDF y revisión antes de entregar).
+- **Resultado:**
+  - README como portada del proyecto, con capturas generadas automáticamente.
+  - PDF generado desde los mismos Markdown con `docs/tools/build-pdf.mjs`.
+- **Validación:**
+  - Se clonó el repositorio en una carpeta limpia y se levantó solo con `cp .env.example .env` y `docker compose up -d`: frontend, Swagger, login demo, 32 productos y usuario de MongoDB con mínimo privilegio.
+  - Se revisó el historial de git buscando secretos reales (ninguno).
+  - Se revisó el PDF página por página: se corrigieron una página casi vacía antes del diagrama, un enlace sobrante y un símbolo mal renderizado.
 
 ## Correcciones y validaciones destacadas
 
