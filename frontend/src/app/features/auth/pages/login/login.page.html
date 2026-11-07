@@ -116,11 +116,26 @@
       </form>
 
       <div class="demo">
-        <mat-icon>info_outline</mat-icon>
-        <div>
+        <div class="demo-header">
+          <mat-icon>info_outline</mat-icon>
           <strong>Usuario de demostración</strong>
-          <span><code>admin&#64;croper.com</code> · <code>Admin123*</code></span>
         </div>
+        @for (item of demoCredentials; track item.key) {
+          <div class="demo-row">
+            <span class="demo-label">{{ item.label }}</span>
+            <code>{{ item.value }}</code>
+            <button
+              type="button"
+              class="copy"
+              [class.copied]="copied() === item.key"
+              [attr.aria-label]="'Copiar ' + item.label.toLowerCase()"
+              [matTooltip]="copied() === item.key ? '¡Copiado!' : 'Copiar'"
+              (click)="copy(item.key, item.value)"
+            >
+              <mat-icon>{{ copied() === item.key ? 'check' : 'content_copy' }}</mat-icon>
+            </button>
+          </div>
+        }
       </div>
     </div>
   </main>

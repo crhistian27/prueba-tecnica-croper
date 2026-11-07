@@ -223,36 +223,87 @@ mat-form-field {
 }
 
 .demo {
-  display: flex;
-  gap: 12px;
   margin-top: 28px;
   padding: 14px 16px;
   border-radius: var(--app-radius-sm);
   background: var(--app-surface-muted);
   border: 1px dashed var(--app-border-strong);
   font-size: 13px;
+}
+
+.demo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 
   .mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
     color: var(--app-brand);
   }
+}
 
-  div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+.demo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+
+  & + & {
+    border-top: 1px solid var(--app-border);
   }
 
-  span {
+  .demo-label {
+    width: 80px;
     color: var(--app-text-muted);
   }
 
   code {
+    flex: 1;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--app-text);
+  }
+}
+
+.copy {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--app-text-muted);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+
+  .mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+
+  &:hover {
+    background: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--app-brand);
+    outline-offset: 1px;
+  }
+
+  &.copied {
+    color: var(--app-success);
+    background: var(--app-success-soft);
+    border-color: #bbf7d0;
   }
 }
 
