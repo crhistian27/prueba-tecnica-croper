@@ -15,7 +15,7 @@ export interface ConfirmDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="body">
-      <span class="icon"><mat-icon>delete_outline</mat-icon></span>
+      <span class="icon"><mat-icon>delete</mat-icon></span>
       <h2 mat-dialog-title>{{ data.title }}</h2>
       <p>{{ data.message }}</p>
     </div>

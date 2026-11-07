@@ -136,9 +136,14 @@ src/app/
 
 ### Rendimiento
 
-- Rutas lazy: el estado, los effects y los componentes de Material de productos no están en el bundle inicial. Bundle inicial: **384 kB (106 kB gzip)**.
-- `MatSnackBar` se carga bajo demanda.
-- En Docker, nginx sirve con gzip, caché inmutable para assets con hash y `no-cache` para `index.html`.
+Detalle y mediciones en [`docs/ejercicio-4-rendimiento.md`](docs/ejercicio-4-rendimiento.md). Resumen (Lighthouse móvil, 4G lento, caché vacía):
+
+- **FCP 4–5 s → 0,7 s** con un *app shell* en `index.html`.
+- **−40/45 % de peso** por página: íconos en subconjunto auto-alojado (170 KB → 5,9 KB, `npm run icons`) e Inter auto-alojada (sin Google Fonts bloqueando el render).
+- Área autenticada en un solo chunk diferido: un viaje de red menos antes de pedir datos (**LCP de productos 5,1 → 4,4 s**).
+- `MatSnackBar` bajo demanda; estado de NgRx por feature.
+- nginx: gzip, caché inmutable para assets con hash y `no-cache` para `index.html`.
+- Medición reproducible: `frontend/scripts/lighthouse-audit.mjs`.
 
 ### Desarrollo local
 

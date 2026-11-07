@@ -57,7 +57,7 @@
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <label class="field-label" for="email">Correo electrónico</label>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-icon matPrefix>mail_outline</mat-icon>
+          <mat-icon matPrefix>mail</mat-icon>
           <input
             id="email"
             matInput
@@ -76,7 +76,7 @@
 
         <label class="field-label" for="password">Contraseña</label>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-icon matPrefix>lock_outline</mat-icon>
+          <mat-icon matPrefix>lock</mat-icon>
           <input
             id="password"
             matInput
@@ -101,7 +101,7 @@
 
         @if (error(); as message) {
           <div class="form-error" role="alert">
-            <mat-icon>error_outline</mat-icon>
+            <mat-icon>error</mat-icon>
             <span>{{ message }}</span>
           </div>
         }
@@ -117,7 +117,7 @@
 
       <div class="demo">
         <div class="demo-header">
-          <mat-icon>info_outline</mat-icon>
+          <mat-icon>info</mat-icon>
           <strong>Usuario de demostración</strong>
         </div>
         @for (item of demoCredentials; track item.key) {

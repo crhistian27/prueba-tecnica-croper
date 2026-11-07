@@ -11,15 +11,8 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./core/layout/shell').then((m) => m.Shell),
-    children: [
-      {
-        path: 'products',
-        loadChildren: () =>
-          import('./features/products/products.routes').then((m) => m.PRODUCTS_ROUTES),
-      },
-      { path: '', pathMatch: 'full', redirectTo: 'products' },
-    ],
+    loadChildren: () =>
+      import('./core/layout/authenticated.routes').then((m) => m.AUTHENTICATED_ROUTES),
   },
   { path: '**', redirectTo: '' },
 ];

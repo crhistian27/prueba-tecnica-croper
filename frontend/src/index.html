@@ -7,19 +7,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0c2418" />
     <meta name="description" content="Panel de gestión de productos agropecuarios" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round&display=block"
-      rel="stylesheet"
-    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <!--
+      App shell: estilos mínimos en línea para pintar algo útil de inmediato,
+      sin esperar a que se descargue y ejecute el JavaScript de Angular.
+    -->
+    <style>
+      body {
+        margin: 0;
+        background: #f5f7f6;
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      .app-shell {
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: #64706a;
+      }
+      .app-shell-logo {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 16px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #22c55e, #15803d);
+        box-shadow: 0 8px 24px rgba(34, 197, 94, 0.35);
+        display: grid;
+        place-items: center;
+        animation: app-shell-pulse 1.4s ease-in-out infinite;
+      }
+      .app-shell-title {
+        margin: 0 0 4px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #111a15;
+      }
+      .app-shell-text {
+        margin: 0;
+        font-size: 14px;
+      }
+      @keyframes app-shell-pulse {
+        50% {
+          transform: scale(0.94);
+          opacity: 0.85;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .app-shell-logo {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <app-root></app-root>
+    <app-root>
+      <!-- Angular reemplaza este contenido al iniciar -->
+      <div class="app-shell" role="status" aria-live="polite">
+        <div>
+          <div class="app-shell-logo" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 32 32">
+              <path
+                d="M23 9c-7 0-12 3.5-12 9.5 0 1.3.3 2.4.8 3.4C13.6 17.6 17 14.8 20 13.5c-3 2-5.6 5-6.8 9 .9.3 1.8.5 2.8.5 6 0 8-6 7-14z"
+                fill="#fff"
+              />
+            </svg>
+          </div>
+          <p class="app-shell-title">Croper</p>
+          <p class="app-shell-text">Cargando panel…</p>
+        </div>
+      </div>
+    </app-root>
   </body>
 </html>

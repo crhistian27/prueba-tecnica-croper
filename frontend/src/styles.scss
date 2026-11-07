@@ -1,5 +1,30 @@
 @use '@angular/material' as mat;
 
+/* Íconos: subconjunto auto-alojado de Material Symbols Rounded (ver scripts/build-icon-font.mjs) */
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block; /* evita mostrar el nombre del ícono como texto mientras carga */
+  src: url('./styles/fonts/material-symbols-rounded.woff2') format('woff2');
+}
+
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
 /* ==========================================================================
    Tema de Material (M3) + sistema de diseño propio
    ========================================================================== */
@@ -13,8 +38,8 @@ html {
         tertiary: mat.$orange-palette,
       ),
       typography: (
-        plain-family: 'Inter, system-ui, sans-serif',
-        brand-family: 'Inter, system-ui, sans-serif',
+        plain-family: "'Inter Variable', system-ui, sans-serif",
+        brand-family: "'Inter Variable', system-ui, sans-serif",
         bold-weight: 600,
         medium-weight: 500,
         regular-weight: 400,
@@ -106,7 +131,7 @@ html {
   --app-border-strong: #d4dbd7;
   --app-text: #111a15;
   --app-text-muted: #64706a;
-  --app-text-subtle: #8a958f;
+  --app-text-subtle: #66706b; /* ≥ 4.5:1 sobre todos los fondos (WCAG AA) */
 
   /* Estados */
   --app-success: #15803d;
@@ -266,7 +291,7 @@ body {
 
 /* Código (SKU) */
 .mono {
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12px;
   color: var(--app-text-muted);
   letter-spacing: 0.01em;

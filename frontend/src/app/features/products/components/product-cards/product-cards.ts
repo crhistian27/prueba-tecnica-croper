@@ -52,7 +52,7 @@ import { Product, ProductCategory, categoryLabel } from '../../../../core/models
               (click)="remove.emit(p)"
               [disabled]="deleting().has(p.id)"
             >
-              <mat-icon>delete_outline</mat-icon> Eliminar
+              <mat-icon>delete</mat-icon> Eliminar
             </button>
           </div>
         </li>

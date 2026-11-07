@@ -47,6 +47,11 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 - **Resultado:** `docs/ejercicio-5-seguridad.md`, con cada respuesta ligada a lo implementado y una lista honesta de lo pendiente para producción.
 - **Validación:** antes de afirmar cada medida se verificó en el código (grep) y contra la API en ejecución (payloads de inyección NoSQL → 400, prueba de rate limiting con dos clientes distintos).
 
+### 7. Ejercicio 4 – Rendimiento
+- **Prompt:** "Paso 4."
+- **Resultado:** se midió la app con Lighthouse en perfil móvil, se aplicaron las optimizaciones que la medición señaló (subconjunto de íconos, fuentes auto-alojadas, cadena de chunks más corta, app shell, contraste) y se documentó en `docs/ejercicio-4-rendimiento.md`.
+- **Validación:** comparación A/B contra la versión anterior (construida desde el commit previo), con caché vacía, throttling real y mediana de varias ejecuciones; revisión visual de los íconos tras cambiar la fuente.
+
 ## Correcciones y validaciones destacadas
 
 | Problema detectado | Causa | Corrección |
@@ -64,3 +69,7 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 | Rango de paginación duplicado y filtro de categoría truncado | Detectado en la revisión visual | Ocultar el rango del paginador y ampliar el filtro |
 | Detrás de nginx, 5 logins fallidos de **cualquier** usuario bloqueaban el login de **todos** | Express veía siempre la IP del proxy, así que el rate limiting se aplicaba a una sola IP compartida | `trust proxy` configurable (`TRUST_PROXY=1`) y puerto de la API solo en `localhost`. Verificado: un cliente bloqueado no se libera falsificando `X-Forwarded-For` y otro cliente no queda afectado |
 | La API se conectaba a MongoDB con el usuario root | Configuración inicial por simplicidad, detectada al responder el Ejercicio 5 | Usuario `croper_app` con `readWrite` solo en su base, creado por un script idempotente de `docker-entrypoint-initdb.d` y aplicado sin borrar datos. Los tests e2e limpian documentos en vez de `dropDatabase`. Verificado: 7 operaciones probadas (2 permitidas, 5 bloqueadas) y una instalación desde cero en un contenedor temporal |
+| La primera medición de Lighthouse daba resultados demasiado buenos ("0 KB transferidos") | El navegador reutilizaba la caché porque la página se había abierto antes | Vaciar la caché HTTP (CDP) antes de cada medición y fijar la sesión desde `/api/health` para no precargar la app |
+| Con la simulación de Lighthouse, el LCP salía 0,6 s o 2,2 s según la ejecución | La simulación (`simulate`) estima tiempos a partir de una carga rápida y daba resultados bimodales | Comparar con throttling real (`devtools`) y la mediana de varias ejecuciones; las conclusiones cambiaron (el login no mejoraba el LCP solo con bajar peso) |
+| El LCP del login no bajaba aunque el peso bajó un 45 % | En una app renderizada en el navegador el camino crítico es el JS, no las fuentes | App shell en `index.html`: FCP 4,0 → 0,7 s. Se documentó el trade-off (sube el TBT medido) |
+| La fuente de íconos pesaba 170 KB | Se cargaba la familia completa (2.000+ íconos) para usar ~40 | Subconjunto generado por script (5,9 KB) que además valida que las plantillas no usen íconos fuera de la lista |

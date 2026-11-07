@@ -43,7 +43,7 @@ import { ProductStats } from '../../../../core/models/product.model';
         <article class="stat" [class.alert]="s.lowStock + s.outOfStock > 0">
           <div class="stat-head">
             <span class="label">Requieren atención</span>
-            <span class="icon-tile tone-red"><mat-icon>warning_amber</mat-icon></span>
+            <span class="icon-tile tone-red"><mat-icon>warning</mat-icon></span>
           </div>
           <strong class="value">{{ s.lowStock + s.outOfStock | number }}</strong>
           <span class="hint"> {{ s.lowStock }} con stock bajo · {{ s.outOfStock }} agotados </span>
