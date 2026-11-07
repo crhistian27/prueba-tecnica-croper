@@ -1,0 +1,191 @@
+<header class="page-header">
+  <div>
+    <h1>Productos</h1>
+    <p class="subtitle">
+      @if (total() > 0) {
+        {{ total() }} {{ total() === 1 ? 'producto' : 'productos' }}
+      } @else if (!loading()) {
+        Sin productos
+      }
+    </p>
+  </div>
+  <button mat-flat-button (click)="openCreate()" class="create-btn">
+    <mat-icon>add</mat-icon>
+    Nuevo producto
+  </button>
+</header>
+
+<section class="filters" aria-label="Filtros">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+    <mat-label>Buscar por nombre o SKU</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="searchControl" type="search" autocomplete="off" />
+    @if (searchControl.value) {
+      <button
+        mat-icon-button
+        matSuffix
+        aria-label="Limpiar búsqueda"
+        (click)="searchControl.setValue('')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="category">
+    <mat-label>Categoría</mat-label>
+    <mat-select [formControl]="categoryControl">
+      <mat-option [value]="null">Todas</mat-option>
+      @for (c of categories; track c.value) {
+        <mat-option [value]="c.value">{{ c.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</section>
+
+<div class="panel">
+  <!-- Barra de progreso fija arriba: evita saltos de layout al cargar -->
+  <mat-progress-bar
+    [mode]="loading() ? 'indeterminate' : 'determinate'"
+    [value]="0"
+    [class.hidden]="!loading()"
+  />
+
+  @if (loadError(); as error) {
+    <div class="state" role="alert">
+      <mat-icon class="state-icon error">cloud_off</mat-icon>
+      <h2>No pudimos cargar los productos</h2>
+      <p>{{ error }}</p>
+      <button mat-stroked-button (click)="retry()"><mat-icon>refresh</mat-icon> Reintentar</button>
+    </div>
+  } @else if (isEmpty() && !loading()) {
+    <div class="state">
+      <mat-icon class="state-icon">{{ hasFilters() ? 'search_off' : 'inventory_2' }}</mat-icon>
+      @if (hasFilters()) {
+        <h2>No hay resultados</h2>
+        <p>Ningún producto coincide con la búsqueda o el filtro.</p>
+        <button mat-stroked-button (click)="clearFilters()">Limpiar filtros</button>
+      } @else {
+        <h2>Aún no hay productos</h2>
+        <p>Crea el primero para empezar.</p>
+        <button mat-flat-button (click)="openCreate()">
+          <mat-icon>add</mat-icon> Nuevo producto
+        </button>
+      }
+    </div>
+  } @else {
+    @if (isHandset()) {
+      <app-product-cards
+        [products]="products()"
+        [deleting]="deleting()"
+        (edit)="openEdit($event)"
+        (remove)="confirmDelete($event)"
+      />
+    } @else {
+      <div class="table-wrapper" [class.dimmed]="loading()">
+        <table
+          mat-table
+          [dataSource]="products()"
+          [trackBy]="trackById"
+          matSort
+          [matSortActive]="query().sortBy === 'createdAt' ? '' : query().sortBy"
+          [matSortDirection]="query().sortBy === 'createdAt' ? '' : query().order"
+          (matSortChange)="onSort($event)"
+        >
+          <ng-container matColumnDef="sku">
+            <th mat-header-cell *matHeaderCellDef>SKU</th>
+            <td mat-cell *matCellDef="let p">
+              <code>{{ p.sku }}</code>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+            <td mat-cell *matCellDef="let p">
+              <div class="name">{{ p.name }}</div>
+              @if (p.description) {
+                <div class="description">{{ p.description }}</div>
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Categoría</th>
+            <td mat-cell *matCellDef="let p">{{ categoryLabel(p.category) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              arrowPosition="before"
+              class="num"
+            >
+              Precio
+            </th>
+            <td mat-cell *matCellDef="let p" class="num">
+              {{ p.price | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="stock">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              arrowPosition="before"
+              class="num"
+            >
+              Stock
+            </th>
+            <td mat-cell *matCellDef="let p" class="num" [class.low-stock]="p.stock < 10">
+              {{ p.stock }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions">
+              <span class="sr-only">Acciones</span>
+            </th>
+            <td mat-cell *matCellDef="let p" class="actions">
+              <button
+                mat-icon-button
+                matTooltip="Editar"
+                [attr.aria-label]="'Editar ' + p.name"
+                (click)="openEdit(p)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="danger"
+                matTooltip="Eliminar"
+                [attr.aria-label]="'Eliminar ' + p.name"
+                [disabled]="deleting().has(p.id)"
+                (click)="confirmDelete(p)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
+    }
+
+    <mat-paginator
+      [length]="total()"
+      [pageIndex]="pageIndex()"
+      [pageSize]="query().limit"
+      [pageSizeOptions]="pageSizes"
+      [hidePageSize]="isHandset()"
+      [disabled]="loading()"
+      showFirstLastButtons
+      (page)="onPage($event)"
+      aria-label="Paginación de productos"
+    />
+  }
+</div>

@@ -1,0 +1,29 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+  row-gap: 4px;
+  padding-top: 8px !important;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+mat-spinner {
+  margin: 0 auto;
+}
+
+button[type='submit'] {
+  min-width: 140px;
+}
+
+@media (max-width: 599px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

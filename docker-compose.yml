@@ -32,6 +32,8 @@ services:
       MONGO_DB_NAME: ${MONGO_DB}
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-3600}
+      # El frontend llama a la API por el proxy de nginx (mismo origen);
+      # CORS solo aplica si se consume la API desde otro origen.
       CORS_ORIGIN: http://localhost:4200
     ports:
       - "3000:3000"
@@ -41,7 +43,15 @@ services:
       timeout: 5s
       retries: 5
 
-  # web: se agrega en el Paso 2 (frontend/Dockerfile)
+  web:
+    build: ./frontend
+    container_name: croper-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "4200:80"
 
 volumes:
   mongo-data:

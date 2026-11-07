@@ -69,10 +69,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof mongo.MongoServerError &&
       exception.code === 11000
     ) {
-      const field = Object.keys(exception.keyValue ?? {})[0] ?? 'campo';
+      const field = Object.keys(exception.keyValue ?? {})[0] ?? '';
+      const messages: Record<string, string> = {
+        sku: 'Ya existe un producto con ese SKU',
+        email: 'Ya existe una cuenta con ese email',
+      };
       return {
         statusCode: HttpStatus.CONFLICT,
-        message: `Ya existe un registro con ese ${field}`,
+        message: messages[field] ?? 'El registro ya existe',
       };
     }
 

@@ -18,17 +18,17 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Esto levanta MongoDB y la API (carga datos demo automáticamente).
+Esto levanta MongoDB, la API (carga datos demo automáticamente) y el frontend.
 
 | Servicio | URL |
 |---|---|
+| **Aplicación web** | **http://localhost:4200** |
 | API | http://localhost:3000/api |
 | Swagger | http://localhost:3000/api/docs |
 | Health | http://localhost:3000/api/health |
 
 **Usuario demo:** `admin@croper.com` / `Admin123*`
 
-> El frontend se agrega en el Paso 2.
 
 ## Backend (`/backend`)
 
@@ -81,4 +81,59 @@ backend/            API REST NestJS
 frontend/           App Angular
 docs/               Respuestas teóricas y uso de IA
 docker-compose.yml  Orquestación de servicios
+```
+
+## Frontend (`/frontend`)
+
+Angular 22 (standalone, zoneless, signals) + NgRx 22 + Angular Material.
+
+### Estructura
+
+```
+src/app/
+  core/                 # transversal: modelos, interceptors, guards, layout, utilidades
+    interceptors/       # authInterceptor (Bearer) · sessionInterceptor (401 → logout)
+    guards/             # authGuard · guestGuard
+    utils/http-error.ts # códigos HTTP → mensajes amigables en español
+  shared/components/    # ConfirmDialog
+  features/
+    auth/               # login + store (actions, reducer con createFeature, effects)
+    products/
+      data-access/      # ProductsApiService
+      store/            # actions · reducer (EntityAdapter) · effects
+      pages/            # ProductsPage (contenedor)
+      components/       # ProductFormDialog · ProductCards (vista móvil)
+      products.routes.ts# ruta lazy que registra estado y effects de la feature
+```
+
+### Manejo de estado (NgRx)
+
+- **Auth:** sesión (token, expiración, usuario) persistida en `localStorage` y rehidratada al iniciar descartando tokens vencidos.
+- **Products:** `EntityAdapter` + estado de consulta (`page`, `limit`, `search`, `category`, `sortBy`, `order`), `total`, `loading`, `saving`, `deletingIds`, `loadError`.
+- Acciones separadas por origen: `Products Page` (UI) y `Products API` (resultados).
+- Los effects usan `switchMap` para cargar (cancela peticiones obsoletas al escribir/paginar), `exhaustMap` para crear/editar (evita doble envío) y `mergeMap` para eliminar.
+- Los componentes leen el store como **signals** (`selectSignal`) con `OnPush`.
+
+### UX
+
+- Tabla con **paginación, ordenamiento y filtros del lado del servidor**; búsqueda con `debounce` de 400 ms.
+- Formulario en diálogo con validaciones; **solo se cierra si la API confirma**, así un error (ej. SKU duplicado) no hace perder lo escrito.
+- Confirmación antes de eliminar; botones deshabilitados y spinners mientras se procesa.
+- Estados de carga, vacío, "sin resultados" y error con botón **Reintentar**.
+- Mensajes amigables en español para cada tipo de error (sin conexión, 400, 401, 404, 409, 429, 5xx).
+- **Responsive:** en pantallas < 600 px la tabla se reemplaza por tarjetas y "Nuevo producto" pasa a botón flotante.
+
+### Rendimiento
+
+- Rutas lazy: el estado, los effects y los componentes de Material de productos no están en el bundle inicial. Bundle inicial: **351 kB (98 kB gzip)**.
+- `MatSnackBar` se carga bajo demanda.
+- En Docker, nginx sirve con gzip, caché inmutable para assets con hash y `no-cache` para `index.html`.
+
+### Desarrollo local
+
+```bash
+cd frontend
+npm install
+npm start          # http://localhost:4200 (proxy de /api → localhost:3000)
+npm test           # tests unitarios (reducer y mapeo de errores)
 ```

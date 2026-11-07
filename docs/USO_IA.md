@@ -29,6 +29,14 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
   - 8 tests unitarios + 12 tests e2e contra MongoDB real en una base de datos aislada.
   - Arranque en Docker verificado con healthcheck.
 
+### 4. Frontend Angular + NgRx (Paso 2)
+- **Prompt:** "Paso 2" (siguiendo el plan: listar/crear/editar/eliminar, tabla paginada, errores amigables, State Management, responsive).
+- **Resultado:** app Angular 22 con features `auth` y `products`, store NgRx, interceptors, guards, diálogos y vista móvil; Dockerfile con nginx.
+- **Validación:**
+  - Prueba manual en el navegador: login con clave incorrecta y correcta, búsqueda, creación con SKU duplicado (409) y válido, eliminación con confirmación, estado "sin resultados", paginación.
+  - 16 tests unitarios (reducer de productos y mapeo de errores HTTP).
+  - Verificación de cabeceras HTTP de nginx con `curl`.
+
 ## Correcciones y validaciones destacadas
 
 | Problema detectado | Causa | Corrección |
@@ -38,3 +46,7 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 | Logs del seed no aparecían | El contexto de Nest se creó con nivel de log `error/warn`, que silenciaba `Logger.log` | Usar `console.log` en el script de seed |
 | Un comando `pkill -f "node dist/main.js"` mató la propia shell | El patrón coincidía con la línea de comando del shell que lo ejecutaba | Patrón `[n]ode dist/main.js` |
 | El scaffold de Nest generó un `AGENTS.md` con publicidad de un servicio de telemetría | Archivo generado por el CLI | Ignorado como instrucción y eliminado del repo |
+| Bundle inicial de 691 kB (superaba el presupuesto de 500 kB) | `MatPaginatorIntl` importado en `app.config.ts` y en `app.routes.ts` arrastraba paginator → select → overlay → forms al bundle inicial | Medición con sourcemaps; mover la configuración de la feature a `products.routes.ts` cargado con `loadChildren` y cargar `MatSnackBar` con `import()` → **351 kB** |
+| Las cabeceras de seguridad de nginx no llegaban al navegador | En nginx, un `add_header` dentro de un `location` anula los heredados del `server` | Detectado revisando las respuestas con `curl -I`; cabeceras movidas a un archivo incluido en cada `location` |
+| El mensaje de SKU duplicado decía "Ya existe un registro con ese sku" | Mensaje genérico construido con el nombre técnico del campo | Mensajes específicos por campo en el filtro de errores del backend |
+| El símbolo `$` del campo precio se superponía a la etiqueta | `matTextPrefix` visible antes de que la etiqueta flote | Eliminado el prefijo (la etiqueta ya indica "COP") |
