@@ -52,6 +52,13 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 - **Resultado:** se midió la app con Lighthouse en perfil móvil, se aplicaron las optimizaciones que la medición señaló (subconjunto de íconos, fuentes auto-alojadas, cadena de chunks más corta, app shell, contraste) y se documentó en `docs/ejercicio-4-rendimiento.md`.
 - **Validación:** comparación A/B contra la versión anterior (construida desde el commit previo), con caché vacía, throttling real y mediana de varias ejecuciones; revisión visual de los íconos tras cambiar la fuente.
 
+### 8. Ejercicio 3 – Arquitectura de microservicios
+- **Prompt:** "Paso 3."
+- **Resultado:** `docs/ejercicio-3-arquitectura.md`: requisitos derivados del contexto agro, recomendación de evolución gradual desde un monolito modular, 11 servicios con su justificación, comunicación (saga orquestada, outbox, idempotencia), datos, seguridad, operación, trade-offs y plan por fases, con 2 diagramas Mermaid.
+- **Validación y ajustes propios:**
+  - Los diagramas se renderizaron con mermaid-cli para validar la sintaxis **y revisarlos visualmente**. El primero era técnicamente válido pero ilegible (flechas cruzadas y etiquetas superpuestas), así que se rediseñó por capas.
+  - Los supuestos de negocio quedaron explícitos en lugar de presentarse como hechos sobre la empresa.
+
 ## Correcciones y validaciones destacadas
 
 | Problema detectado | Causa | Corrección |
