@@ -1,77 +1,164 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Editar producto' : 'Nuevo producto' }}</h2>
+<header class="dialog-header">
+  <span class="icon-tile tone-green">
+    <mat-icon>{{ isEdit ? 'edit_note' : 'add_box' }}</mat-icon>
+  </span>
+  <div>
+    <h2 mat-dialog-title>{{ isEdit ? 'Editar producto' : 'Nuevo producto' }}</h2>
+    <p>
+      {{
+        isEdit
+          ? 'Actualiza la información del producto.'
+          : 'Completa los datos para agregarlo al catálogo.'
+      }}
+    </p>
+  </div>
+  <button
+    mat-icon-button
+    type="button"
+    class="close"
+    aria-label="Cerrar"
+    (click)="cancel()"
+    [disabled]="saving()"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
 
 <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-  <mat-dialog-content class="grid">
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" maxlength="120" cdkFocusInitial />
-      @if (form.controls.name.hasError('required')) {
-        <mat-error>El nombre es obligatorio</mat-error>
-      }
-    </mat-form-field>
+  <mat-dialog-content>
+    <section class="section">
+      <h3>Información general</h3>
+      <div class="grid">
+        <div class="field full">
+          <label for="name">Nombre del producto</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="name"
+              matInput
+              formControlName="name"
+              maxlength="120"
+              placeholder="Ej: Fertilizante Triple 15 x 50 kg"
+            />
+            @if (form.controls.name.hasError('required')) {
+              <mat-error>El nombre es obligatorio</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>SKU</mat-label>
-      <input matInput formControlName="sku" maxlength="30" class="uppercase" />
-      <mat-hint>Ej: FER-T15-50</mat-hint>
-      @if (form.controls.sku.hasError('required')) {
-        <mat-error>El SKU es obligatorio</mat-error>
-      } @else if (form.controls.sku.hasError('pattern')) {
-        <mat-error>3 a 30 caracteres: letras, números o guiones</mat-error>
-      }
-    </mat-form-field>
+        <div class="field">
+          <label for="sku">SKU</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="sku"
+              matInput
+              formControlName="sku"
+              maxlength="30"
+              class="uppercase"
+              placeholder="FER-T15-50"
+            />
+            @if (form.controls.sku.hasError('required')) {
+              <mat-error>El SKU es obligatorio</mat-error>
+            } @else if (form.controls.sku.hasError('pattern')) {
+              <mat-error>3 a 30 caracteres: letras, números o guiones</mat-error>
+            } @else {
+              <mat-hint>Código único del producto</mat-hint>
+            }
+          </mat-form-field>
+        </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Categoría</mat-label>
-      <mat-select formControlName="category">
-        @for (c of categories; track c.value) {
-          <mat-option [value]="c.value">{{ c.label }}</mat-option>
-        }
-      </mat-select>
-      @if (form.controls.category.hasError('required')) {
-        <mat-error>Selecciona una categoría</mat-error>
-      }
-    </mat-form-field>
+        <div class="field">
+          <label for="category">Categoría</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-select
+              id="category"
+              formControlName="category"
+              placeholder="Selecciona una categoría"
+            >
+              @for (c of categories; track c.value) {
+                <mat-option [value]="c.value">{{ c.label }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.category.hasError('required')) {
+              <mat-error>Selecciona una categoría</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Precio (COP)</mat-label>
-      <input
-        matInput
-        type="number"
-        formControlName="price"
-        min="0"
-        step="100"
-        inputmode="decimal"
-      />
-      @if (form.controls.price.hasError('required')) {
-        <mat-error>El precio es obligatorio</mat-error>
-      } @else if (form.controls.price.hasError('min')) {
-        <mat-error>El precio no puede ser negativo</mat-error>
-      }
-    </mat-form-field>
+        <div class="field full">
+          <label for="description">Descripción <span class="optional">(opcional)</span></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <textarea
+              id="description"
+              matInput
+              formControlName="description"
+              rows="3"
+              maxlength="1000"
+              placeholder="Características, presentación, recomendaciones de uso…"
+            ></textarea>
+            <mat-hint align="end">{{ form.controls.description.value.length }}/1000</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Stock</mat-label>
-      <input matInput type="number" formControlName="stock" min="0" step="1" inputmode="numeric" />
-      @if (form.controls.stock.hasError('required')) {
-        <mat-error>El stock es obligatorio</mat-error>
-      } @else if (form.controls.stock.hasError('min')) {
-        <mat-error>El stock no puede ser negativo</mat-error>
-      } @else if (form.controls.stock.hasError('pattern')) {
-        <mat-error>Debe ser un número entero</mat-error>
-      }
-    </mat-form-field>
+    <section class="section">
+      <h3>Precio e inventario</h3>
+      <div class="grid">
+        <div class="field">
+          <label for="price">Precio de venta</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <span matTextPrefix class="prefix">$</span>
+            <input
+              id="price"
+              matInput
+              type="number"
+              formControlName="price"
+              min="0"
+              step="100"
+              inputmode="decimal"
+              placeholder="0"
+            />
+            <span matTextSuffix class="suffix">COP</span>
+            @if (form.controls.price.hasError('required')) {
+              <mat-error>El precio es obligatorio</mat-error>
+            } @else if (form.controls.price.hasError('min')) {
+              <mat-error>El precio no puede ser negativo</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="description" rows="3" maxlength="1000"></textarea>
-      <mat-hint align="end">{{ form.controls.description.value.length }}/1000</mat-hint>
-    </mat-form-field>
+        <div class="field">
+          <label for="stock">Unidades en stock</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="stock"
+              matInput
+              type="number"
+              formControlName="stock"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              placeholder="0"
+            />
+            <span matTextSuffix class="suffix">und</span>
+            @if (form.controls.stock.hasError('required')) {
+              <mat-error>El stock es obligatorio</mat-error>
+            } @else if (form.controls.stock.hasError('min')) {
+              <mat-error>El stock no puede ser negativo</mat-error>
+            } @else if (form.controls.stock.hasError('pattern')) {
+              <mat-error>Debe ser un número entero</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
   </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="saving()">Cancelar</button>
-    <button mat-flat-button type="submit" [disabled]="saving()">
+  <mat-dialog-actions>
+    <button mat-stroked-button type="button" (click)="cancel()" [disabled]="saving()">
+      Cancelar
+    </button>
+    <button mat-flat-button type="submit" class="submit" [disabled]="saving()">
       @if (saving()) {
         <mat-spinner diameter="18" />
       } @else {

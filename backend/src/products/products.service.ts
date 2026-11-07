@@ -6,6 +6,18 @@ import { QueryProductsDto } from './dto/query-products.dto.js';
 import { UpdateProductDto } from './dto/update-product.dto.js';
 import { Product, ProductDocument } from './schemas/product.schema.js';
 
+/** Umbral por debajo del cual un producto se considera con stock bajo. */
+export const LOW_STOCK_THRESHOLD = 10;
+
+export interface ProductStats {
+  totalProducts: number;
+  totalUnits: number;
+  inventoryValue: number;
+  lowStock: number;
+  outOfStock: number;
+  lowStockThreshold: number;
+}
+
 export interface Paginated<T> {
   data: T[];
   total: number;
@@ -50,6 +62,47 @@ export class ProductsService {
     ]);
 
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  /** Indicadores del inventario calculados en MongoDB (una sola consulta). */
+  async getStats(): Promise<ProductStats> {
+    const [result] = await this.productModel
+      .aggregate<Omit<ProductStats, 'lowStockThreshold'>>([
+        {
+          $group: {
+            _id: null,
+            totalProducts: { $sum: 1 },
+            totalUnits: { $sum: '$stock' },
+            inventoryValue: { $sum: { $multiply: ['$price', '$stock'] } },
+            lowStock: {
+              $sum: {
+                $cond: [
+                  {
+                    $and: [
+                      { $gt: ['$stock', 0] },
+                      { $lt: ['$stock', LOW_STOCK_THRESHOLD] },
+                    ],
+                  },
+                  1,
+                  0,
+                ],
+              },
+            },
+            outOfStock: { $sum: { $cond: [{ $eq: ['$stock', 0] }, 1, 0] } },
+          },
+        },
+        { $project: { _id: 0 } },
+      ])
+      .exec();
+
+    return {
+      totalProducts: result?.totalProducts ?? 0,
+      totalUnits: result?.totalUnits ?? 0,
+      inventoryValue: result?.inventoryValue ?? 0,
+      lowStock: result?.lowStock ?? 0,
+      outOfStock: result?.outOfStock ?? 0,
+      lowStockThreshold: LOW_STOCK_THRESHOLD,
+    };
   }
 
   async findOne(id: string): Promise<ProductDocument> {

@@ -21,3 +21,21 @@ export class PaginatedProductsDto {
   @ApiProperty({ example: 10 }) limit: number;
   @ApiProperty({ example: 5 }) totalPages: number;
 }
+
+export class ProductStatsDto {
+  @ApiProperty({ example: 32 }) totalProducts: number;
+  @ApiProperty({ example: 1543, description: 'Suma de unidades en stock' })
+  totalUnits: number;
+  @ApiProperty({
+    example: 98500000,
+    description: 'Suma de precio × stock (COP)',
+  })
+  inventoryValue: number;
+  @ApiProperty({
+    example: 4,
+    description: 'Productos con stock entre 1 y el umbral',
+  })
+  lowStock: number;
+  @ApiProperty({ example: 1 }) outOfStock: number;
+  @ApiProperty({ example: 10 }) lowStockThreshold: number;
+}

@@ -27,6 +27,7 @@ import { CreateProductDto } from './dto/create-product.dto.js';
 import {
   PaginatedProductsDto,
   ProductResponseDto,
+  ProductStatsDto,
 } from './dto/product-response.dto.js';
 import { QueryProductsDto } from './dto/query-products.dto.js';
 import { UpdateProductDto } from './dto/update-product.dto.js';
@@ -46,6 +47,16 @@ export class ProductsController {
   @ApiOkResponse({ type: PaginatedProductsDto })
   findAll(@Query() query: QueryProductsDto) {
     return this.productsService.findAll(query);
+  }
+
+  /** Debe declararse antes de `:id` para que "stats" no se tome como un id. */
+  @Get('stats')
+  @ApiOperation({
+    summary: 'Indicadores del inventario (totales, valor, stock bajo)',
+  })
+  @ApiOkResponse({ type: ProductStatsDto })
+  getStats() {
+    return this.productsService.getStats();
   }
 
   @Get(':id')

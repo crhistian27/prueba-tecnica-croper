@@ -2,7 +2,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { Paginated, Product, ProductInput, ProductQuery } from '../../../core/models/product.model';
+import {
+  Paginated,
+  Product,
+  ProductInput,
+  ProductQuery,
+  ProductStats,
+} from '../../../core/models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductsApiService {
@@ -18,6 +24,10 @@ export class ProductsApiService {
     if (query.search.trim()) params = params.set('search', query.search.trim());
     if (query.category) params = params.set('category', query.category);
     return this.http.get<Paginated<Product>>(this.url, { params });
+  }
+
+  stats(): Observable<ProductStats> {
+    return this.http.get<ProductStats>(`${this.url}/stats`);
   }
 
   create(input: ProductInput): Observable<Product> {

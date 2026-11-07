@@ -39,6 +39,7 @@ Esto levanta MongoDB, la API (carga datos demo automáticamente) y el frontend.
 | POST | `/api/auth/register` | — | Registro (rate limit 5/min) |
 | POST | `/api/auth/login` | — | Login → JWT (rate limit 5/min) |
 | GET | `/api/products?page=&limit=&search=&category=&sortBy=&order=` | JWT | Lista paginada |
+| GET | `/api/products/stats` | JWT | Indicadores: total, unidades, valor del inventario, stock bajo/agotado |
 | GET | `/api/products/:id` | JWT | Detalle |
 | POST | `/api/products` | JWT | Crear |
 | PATCH | `/api/products/:id` | JWT | Actualizar parcial |
@@ -114,18 +115,26 @@ src/app/
 - Los effects usan `switchMap` para cargar (cancela peticiones obsoletas al escribir/paginar), `exhaustMap` para crear/editar (evita doble envío) y `mergeMap` para eliminar.
 - Los componentes leen el store como **signals** (`selectSignal`) con `OnPush`.
 
+### Diseño
+
+- Layout tipo panel: menú lateral (se vuelve panel deslizable en pantallas < 960 px), barra superior con ruta y menú de usuario.
+- Tarjetas de indicadores (productos, unidades, valor del inventario, productos que requieren atención) calculadas en MongoDB con una agregación.
+- Tabla con ícono y color por categoría, estado de stock (Disponible / Stock bajo / Agotado) y acciones por fila.
+- Login en dos columnas con panel de marca; formulario en diálogo organizado por secciones.
+- Sistema de diseño propio en `styles.scss`: tokens de color, tipografía Inter, íconos redondeados y ajustes de Material (`*-overrides`).
+
 ### UX
 
 - Tabla con **paginación, ordenamiento y filtros del lado del servidor**; búsqueda con `debounce` de 400 ms.
 - Formulario en diálogo con validaciones; **solo se cierra si la API confirma**, así un error (ej. SKU duplicado) no hace perder lo escrito.
 - Confirmación antes de eliminar; botones deshabilitados y spinners mientras se procesa.
-- Estados de carga, vacío, "sin resultados" y error con botón **Reintentar**.
+- Estados de carga (esqueletos con la forma de la tabla), vacío, "sin resultados" y error con botón **Reintentar**.
 - Mensajes amigables en español para cada tipo de error (sin conexión, 400, 401, 404, 409, 429, 5xx).
 - **Responsive:** en pantallas < 600 px la tabla se reemplaza por tarjetas y "Nuevo producto" pasa a botón flotante.
 
 ### Rendimiento
 
-- Rutas lazy: el estado, los effects y los componentes de Material de productos no están en el bundle inicial. Bundle inicial: **351 kB (98 kB gzip)**.
+- Rutas lazy: el estado, los effects y los componentes de Material de productos no están en el bundle inicial. Bundle inicial: **384 kB (106 kB gzip)**.
 - `MatSnackBar` se carga bajo demanda.
 - En Docker, nginx sirve con gzip, caché inmutable para assets con hash y `no-cache` para `index.html`.
 

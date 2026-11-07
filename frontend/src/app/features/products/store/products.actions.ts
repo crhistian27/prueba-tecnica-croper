@@ -1,5 +1,11 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Paginated, Product, ProductInput, ProductQuery } from '../../../core/models/product.model';
+import {
+  Paginated,
+  Product,
+  ProductInput,
+  ProductQuery,
+  ProductStats,
+} from '../../../core/models/product.model';
 
 /** Eventos disparados desde la UI. */
 export const ProductsPageActions = createActionGroup({
@@ -20,6 +26,7 @@ export const ProductsApiActions = createActionGroup({
   events: {
     'Load Success': props<{ result: Paginated<Product> }>(),
     'Load Failure': props<{ error: string }>(),
+    'Stats Loaded': props<{ stats: ProductStats }>(),
     'Create Success': props<{ product: Product }>(),
     'Create Failure': props<{ error: string }>(),
     'Update Success': props<{ product: Product }>(),

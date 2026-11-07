@@ -8,6 +8,7 @@ import {
   LOCALE_ID,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
+import { MAT_ICON_DEFAULT_OPTIONS } from '@angular/material/icon';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
@@ -30,5 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     { provide: LOCALE_ID, useValue: 'es-CO' },
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'COP' },
+    // Íconos redondeados (Material Icons Round, cargados en index.html)
+    { provide: MAT_ICON_DEFAULT_OPTIONS, useValue: { fontSet: 'material-icons-round' } },
   ],
 };

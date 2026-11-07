@@ -37,6 +37,11 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
   - 16 tests unitarios (reducer de productos y mapeo de errores HTTP).
   - Verificación de cabeceras HTTP de nginx con `curl`.
 
+### 5. Rediseño visual
+- **Prompt:** "Revisa y mejora el diseño, se ve muy básico, quiero que se vea más profesional."
+- **Resultado:** layout tipo panel con menú lateral, tarjetas de indicadores (nuevo endpoint `GET /products/stats`), tabla con íconos por categoría y estado de stock, login en dos columnas, diálogo por secciones y sistema de diseño propio.
+- **Validación:** revisión visual en el navegador en escritorio y en un iframe de 390 px para la vista móvil; test e2e del nuevo endpoint.
+
 ## Correcciones y validaciones destacadas
 
 | Problema detectado | Causa | Corrección |
@@ -50,3 +55,5 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 | Las cabeceras de seguridad de nginx no llegaban al navegador | En nginx, un `add_header` dentro de un `location` anula los heredados del `server` | Detectado revisando las respuestas con `curl -I`; cabeceras movidas a un archivo incluido en cada `location` |
 | El mensaje de SKU duplicado decía "Ya existe un registro con ese sku" | Mensaje genérico construido con el nombre técnico del campo | Mensajes específicos por campo en el filtro de errores del backend |
 | El símbolo `$` del campo precio se superponía a la etiqueta | `matTextPrefix` visible antes de que la etiqueta flote | Eliminado el prefijo (la etiqueta ya indica "COP") |
+| El build fallaba al no poder descargar Google Fonts | Angular intenta incrustar el CSS de las fuentes en producción, lo que hace depender el build de internet | Desactivar `optimization.fonts` para que el build (y el de Docker) sea reproducible |
+| Rango de paginación duplicado y filtro de categoría truncado | Detectado en la revisión visual | Ocultar el rango del paginador y ampliar el filtro |

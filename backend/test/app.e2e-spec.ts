@@ -136,6 +136,20 @@ describe('API (e2e)', () => {
       expect(res.body.data[0].sku).toBe(product.sku);
     });
 
+    it('devuelve indicadores del inventario', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/api/products/stats')
+        .set(auth())
+        .expect(200);
+      expect(res.body).toMatchObject({
+        totalProducts: 1,
+        totalUnits: product.stock,
+        inventoryValue: product.price * product.stock,
+        lowStock: 0,
+        outOfStock: 0,
+      });
+    });
+
     it('actualiza parcialmente', async () => {
       const res = await request(app.getHttpServer())
         .patch(`/api/products/${id}`)

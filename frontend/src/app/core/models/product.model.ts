@@ -56,3 +56,12 @@ export interface Paginated<T> {
   limit: number;
   totalPages: number;
 }
+
+export interface ProductStats {
+  totalProducts: number;
+  totalUnits: number;
+  inventoryValue: number;
+  lowStock: number;
+  outOfStock: number;
+  lowStockThreshold: number;
+}

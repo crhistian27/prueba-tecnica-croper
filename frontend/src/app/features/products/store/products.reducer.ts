@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
-import { Product, ProductQuery } from '../../../core/models/product.model';
+import { Product, ProductQuery, ProductStats } from '../../../core/models/product.model';
 import { AuthActions } from '../../auth/store/auth.actions';
 import { ProductsApiActions, ProductsPageActions } from './products.actions';
 
@@ -15,6 +15,8 @@ export interface ProductsState extends EntityState<Product> {
   deletingIds: string[];
   /** Error al cargar la lista (se muestra en pantalla con opción de reintentar) */
   loadError: string | null;
+  /** Indicadores del inventario (null mientras cargan) */
+  stats: ProductStats | null;
 }
 
 /** Sin sortComparer: se respeta el orden en que el servidor devuelve la página. */
@@ -36,6 +38,7 @@ export const initialProductsState: ProductsState = productsAdapter.getInitialSta
   saving: false,
   deletingIds: [],
   loadError: null,
+  stats: null,
 });
 
 export const productsFeature = createFeature({
@@ -99,6 +102,8 @@ export const productsFeature = createFeature({
     on(ProductsApiActions.deleteFailure, (state) => ({ ...state, deletingIds: [] })),
 
     // Al cerrar sesión no deben quedar datos en memoria
+    on(ProductsApiActions.statsLoaded, (state, { stats }) => ({ ...state, stats })),
+
     on(AuthActions.logout, AuthActions.sessionExpired, () => initialProductsState),
   ),
   extraSelectors: ({ selectProductsState, selectQuery, selectTotal, selectDeletingIds }) => {

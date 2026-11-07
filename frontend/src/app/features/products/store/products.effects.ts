@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
-import { catchError, exhaustMap, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, exhaustMap, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { NotificationService } from '../../../core/services/notification.service';
 import { toFriendlyMessage } from '../../../core/utils/http-error';
 import { ProductsApiService } from '../data-access/products-api.service';
@@ -52,6 +52,30 @@ export const reloadOutOfRangePage = createEffect(
               ),
             )
           : of(),
+      ),
+    ),
+  { functional: true },
+);
+
+/**
+ * Indicadores del inventario: se recalculan al abrir la página y después de
+ * cualquier cambio. Si fallan no se interrumpe al usuario (son informativos).
+ */
+export const loadStats = createEffect(
+  (actions$ = inject(Actions), api = inject(ProductsApiService)) =>
+    actions$.pipe(
+      ofType(
+        ProductsPageActions.opened,
+        ProductsPageActions.retry,
+        ProductsApiActions.createSuccess,
+        ProductsApiActions.updateSuccess,
+        ProductsApiActions.deleteSuccess,
+      ),
+      switchMap(() =>
+        api.stats().pipe(
+          map((stats) => ProductsApiActions.statsLoaded({ stats })),
+          catchError(() => EMPTY),
+        ),
       ),
     ),
   { functional: true },

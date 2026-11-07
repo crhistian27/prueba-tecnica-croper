@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +14,6 @@ import { authFeature } from '../../store/auth.reducer';
   selector: 'app-login-page',
   imports: [
     ReactiveFormsModule,
-    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -33,6 +31,7 @@ export class LoginPage {
   protected readonly loading = this.store.selectSignal(authFeature.selectLoading);
   protected readonly error = this.store.selectSignal(authFeature.selectError);
   protected readonly hidePassword = signal(true);
+  protected readonly year = new Date().getFullYear();
 
   protected readonly form = inject(NonNullableFormBuilder).group({
     email: ['', [Validators.required, Validators.email]],
