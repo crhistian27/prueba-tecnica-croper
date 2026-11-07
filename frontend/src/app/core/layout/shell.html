@@ -1,0 +1,86 @@
+<mat-sidenav-container class="layout" autosize>
+  <mat-sidenav
+    #drawer
+    class="sidebar"
+    [mode]="isCompact() ? 'over' : 'side'"
+    [opened]="!isCompact()"
+    [fixedInViewport]="isCompact()"
+  >
+    <div class="brand">
+      <div class="brand-logo"><mat-icon>eco</mat-icon></div>
+      <div class="brand-text">
+        <strong>Croper</strong>
+        <span>Panel de gestión</span>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Navegación principal">
+      <span class="nav-section">Catálogo</span>
+      <a
+        class="nav-item"
+        routerLink="/products"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        (click)="isCompact() && drawer.close()"
+      >
+        <mat-icon>inventory_2</mat-icon>
+        <span>Productos</span>
+      </a>
+    </nav>
+
+    @if (user(); as u) {
+      <div class="sidebar-user">
+        <div class="avatar">{{ userInitials() }}</div>
+        <div class="user-info">
+          <strong>{{ u.name }}</strong>
+          <span>{{ u.email }}</span>
+        </div>
+        <button
+          mat-icon-button
+          matTooltip="Cerrar sesión"
+          aria-label="Cerrar sesión"
+          (click)="logout()"
+        >
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    }
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main">
+    <header class="topbar">
+      @if (isCompact()) {
+        <button mat-icon-button aria-label="Abrir menú" (click)="drawer.open()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <nav class="breadcrumb" aria-label="Ruta">
+        <span>Catálogo</span>
+        <mat-icon>chevron_right</mat-icon>
+        <strong>Productos</strong>
+      </nav>
+      <span class="spacer"></span>
+      @if (user(); as u) {
+        <button class="user-button" [matMenuTriggerFor]="menu" aria-label="Menú de usuario">
+          <span class="avatar small">{{ userInitials() }}</span>
+          <span class="user-name">{{ u.name }}</span>
+          <mat-icon>expand_more</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+          <div class="menu-header">
+            <strong>{{ u.name }}</strong>
+            <span>{{ u.email }}</span>
+          </div>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar sesión</span>
+          </button>
+        </mat-menu>
+      }
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

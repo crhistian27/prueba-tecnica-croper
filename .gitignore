@@ -1,0 +1,20 @@
+# Dependencias y builds
+node_modules/
+dist/
+.angular/
+coverage/
+
+# Variables de entorno (nunca subir secretos)
+.env
+.env.*
+!.env.example
+
+# Sistema / editores
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# Material personal de la prueba (no se publica)
+Prueba_Tecnica_FullStack.pdf
+PLAN_PRUEBA_TECNICA.md

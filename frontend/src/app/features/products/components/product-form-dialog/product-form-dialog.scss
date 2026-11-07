@@ -1,0 +1,136 @@
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--app-border);
+
+  > div {
+    flex: 1;
+  }
+
+  h2[mat-dialog-title] {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  p {
+    margin: 2px 0 0;
+    font-size: 14px;
+    color: var(--app-text-muted);
+  }
+
+  .close {
+    margin: -8px -8px 0 0;
+    color: var(--app-text-muted);
+  }
+}
+
+mat-dialog-content.mat-mdc-dialog-content {
+  max-height: min(64vh, 640px);
+  padding: 8px 24px 4px;
+}
+
+.section {
+  padding: 16px 0;
+
+  & + .section {
+    border-top: 1px solid var(--app-border);
+  }
+
+  h3 {
+    margin: 0 0 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--app-text-subtle);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--app-text);
+  }
+
+  .optional {
+    font-weight: 400;
+    color: var(--app-text-subtle);
+  }
+}
+
+/* Campos más compactos dentro del diálogo */
+mat-form-field {
+  --mat-form-field-container-height: 46px;
+  --mat-form-field-container-vertical-padding: 11px;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.prefix,
+.suffix {
+  color: var(--app-text-subtle);
+  font-size: 14px;
+}
+
+.prefix {
+  padding-right: 4px;
+}
+
+.suffix {
+  padding-left: 6px;
+}
+
+mat-dialog-actions.mat-mdc-dialog-actions {
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--app-border);
+  background: var(--app-surface-muted);
+}
+
+.submit {
+  min-width: 160px;
+
+  mat-spinner {
+    margin: 0 auto;
+    --mat-progress-spinner-active-indicator-color: #fff;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  mat-dialog-actions.mat-mdc-dialog-actions {
+    button {
+      flex: 1;
+    }
+  }
+}

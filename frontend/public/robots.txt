@@ -1,0 +1,3 @@
+# Panel de administración privado: no debe indexarse en buscadores.
+User-agent: *
+Disallow: /

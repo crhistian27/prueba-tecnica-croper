@@ -1,0 +1,236 @@
+<header class="page-header">
+  <div>
+    <h1>Productos</h1>
+    <p>Administra el catálogo y el inventario de insumos agropecuarios.</p>
+  </div>
+  <button mat-flat-button class="create-btn" (click)="openCreate()">
+    <mat-icon>add</mat-icon>
+    Nuevo producto
+  </button>
+</header>
+
+<app-stats-cards [stats]="stats()" />
+
+<section class="panel">
+  <!-- Barra de herramientas: búsqueda y filtros -->
+  <div class="toolbar">
+    <div class="search">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input
+        [formControl]="searchControl"
+        type="search"
+        placeholder="Buscar por nombre o SKU…"
+        aria-label="Buscar por nombre o SKU"
+        autocomplete="off"
+      />
+      @if (searchControl.value) {
+        <button
+          type="button"
+          class="clear"
+          aria-label="Limpiar búsqueda"
+          (click)="searchControl.setValue('')"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="category">
+      <mat-icon matPrefix>filter_list</mat-icon>
+      <mat-select
+        [formControl]="categoryControl"
+        placeholder="Todas las categorías"
+        aria-label="Filtrar por categoría"
+      >
+        <mat-option [value]="null">Todas las categorías</mat-option>
+        @for (c of categories; track c.value) {
+          <mat-option [value]="c.value">{{ c.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (hasFilters()) {
+      <button mat-button class="clear-filters" (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Limpiar
+      </button>
+    }
+  </div>
+
+  <!-- Barra de progreso: altura fija para evitar saltos de layout -->
+  <div class="progress">
+    @if (loading() && products().length > 0) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  </div>
+
+  @if (loadError(); as error) {
+    <div class="state" role="alert">
+      <span class="state-icon danger"><mat-icon>cloud_off</mat-icon></span>
+      <h2>No pudimos cargar los productos</h2>
+      <p>{{ error }}</p>
+      <button mat-stroked-button (click)="retry()"><mat-icon>refresh</mat-icon> Reintentar</button>
+    </div>
+  } @else if (loading() && products().length === 0) {
+    <!-- Primera carga: esqueleto con la forma de la tabla -->
+    <div class="skeleton-list" aria-busy="true" aria-label="Cargando productos">
+      @for (i of skeletonRows; track i) {
+        <div class="skeleton-row">
+          <span class="skeleton" style="width: 40px; height: 40px; border-radius: 10px"></span>
+          <div class="skeleton-text">
+            <span class="skeleton" style="width: 55%; height: 14px"></span>
+            <span class="skeleton" style="width: 30%; height: 12px"></span>
+          </div>
+          <span class="skeleton hide-mobile" style="width: 90px; height: 22px"></span>
+          <span class="skeleton hide-mobile" style="width: 80px; height: 14px"></span>
+        </div>
+      }
+    </div>
+  } @else if (isEmpty()) {
+    <div class="state">
+      @if (hasFilters()) {
+        <span class="state-icon"><mat-icon>search_off</mat-icon></span>
+        <h2>Sin resultados</h2>
+        <p>Ningún producto coincide con la búsqueda o el filtro seleccionado.</p>
+        <button mat-stroked-button (click)="clearFilters()">Limpiar filtros</button>
+      } @else {
+        <span class="state-icon"><mat-icon>inventory_2</mat-icon></span>
+        <h2>Aún no hay productos</h2>
+        <p>Crea tu primer producto para empezar a gestionar el inventario.</p>
+        <button mat-flat-button (click)="openCreate()">
+          <mat-icon>add</mat-icon> Nuevo producto
+        </button>
+      }
+    </div>
+  } @else {
+    @if (isHandset()) {
+      <app-product-cards
+        [products]="products()"
+        [deleting]="deleting()"
+        (edit)="openEdit($event)"
+        (remove)="confirmDelete($event)"
+      />
+    } @else {
+      <div class="table-wrapper" [class.dimmed]="loading()">
+        <table
+          mat-table
+          [dataSource]="products()"
+          [trackBy]="trackById"
+          matSort
+          [matSortActive]="query().sortBy === 'createdAt' ? '' : query().sortBy"
+          [matSortDirection]="query().sortBy === 'createdAt' ? '' : query().order"
+          (matSortChange)="onSort($event)"
+        >
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
+            <td mat-cell *matCellDef="let p">
+              <div class="product">
+                <span class="icon-tile" [class]="'tone-' + meta(p.category).tone">
+                  <mat-icon>{{ meta(p.category).icon }}</mat-icon>
+                </span>
+                <div class="product-text">
+                  <span class="product-name">{{ p.name }}</span>
+                  <span class="mono">{{ p.sku }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Categoría</th>
+            <td mat-cell *matCellDef="let p">
+              <span class="chip" [class]="'tone-' + meta(p.category).tone">{{
+                categoryLabel(p.category)
+              }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              arrowPosition="before"
+              class="num"
+            >
+              Precio
+            </th>
+            <td mat-cell *matCellDef="let p" class="num price">
+              {{ p.price | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="stock">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              arrowPosition="before"
+              class="num"
+            >
+              Stock
+            </th>
+            <td mat-cell *matCellDef="let p" class="num">
+              <span class="stock-value">{{ p.stock }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let p">
+              <span class="badge" [class]="status(p.stock).tone">{{ status(p.stock).label }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions">
+              <span class="sr-only">Acciones</span>
+            </th>
+            <td mat-cell *matCellDef="let p" class="actions">
+              <button
+                mat-icon-button
+                class="row-action"
+                matTooltip="Editar"
+                [attr.aria-label]="'Editar ' + p.name"
+                (click)="openEdit(p)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="row-action danger"
+                matTooltip="Eliminar"
+                [attr.aria-label]="'Eliminar ' + p.name"
+                [disabled]="deleting().has(p.id)"
+                (click)="confirmDelete(p)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
+    }
+
+    <footer class="panel-footer">
+      <span class="range">
+        Mostrando <strong>{{ rangeStart() }}–{{ rangeEnd() }}</strong> de
+        <strong>{{ total() }}</strong>
+      </span>
+      <mat-paginator
+        [length]="total()"
+        [pageIndex]="pageIndex()"
+        [pageSize]="query().limit"
+        [pageSizeOptions]="pageSizes"
+        [hidePageSize]="isHandset()"
+        [disabled]="loading()"
+        showFirstLastButtons
+        (page)="onPage($event)"
+        aria-label="Paginación de productos"
+      />
+    </footer>
+  }
+</section>

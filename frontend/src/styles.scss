@@ -1,0 +1,367 @@
+@use '@angular/material' as mat;
+
+/* Íconos: subconjunto auto-alojado de Material Symbols Rounded (ver scripts/build-icon-font.mjs) */
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block; /* evita mostrar el nombre del ícono como texto mientras carga */
+  src: url('./styles/fonts/material-symbols-rounded.woff2') format('woff2');
+}
+
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Tema de Material (M3) + sistema de diseño propio
+   ========================================================================== */
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$green-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (
+        plain-family: "'Inter Variable', system-ui, sans-serif",
+        brand-family: "'Inter Variable', system-ui, sans-serif",
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+
+  /* Ajustes de componentes: esquinas, bordes y superficies más sobrias */
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 10px,
+      outlined-container-shape: 10px,
+      text-container-shape: 10px,
+      filled-container-height: 40px,
+      outlined-container-height: 40px,
+      outlined-outline-color: var(--app-border-strong),
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: 10px,
+      outlined-outline-color: var(--app-border-strong),
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      container-shape: 16px,
+      container-color: var(--app-surface),
+    )
+  );
+  @include mat.card-overrides(
+    (
+      outlined-container-shape: var(--app-radius),
+      outlined-outline-color: var(--app-border),
+      outlined-container-color: var(--app-surface),
+    )
+  );
+  @include mat.table-overrides(
+    (
+      background-color: transparent,
+      header-headline-color: var(--app-text-muted),
+      header-headline-size: 12px,
+      header-headline-weight: 600,
+      row-item-outline-color: var(--app-border),
+      header-container-height: 44px,
+      row-item-container-height: 64px,
+    )
+  );
+  @include mat.paginator-overrides(
+    (
+      container-background-color: transparent,
+      container-text-color: var(--app-text-muted),
+    )
+  );
+  @include mat.menu-overrides(
+    (
+      container-shape: 12px,
+      container-color: var(--app-surface),
+    )
+  );
+  @include mat.select-overrides(
+    (
+      panel-background-color: var(--app-surface),
+    )
+  );
+  @include mat.snack-bar-overrides(
+    (
+      container-shape: 10px,
+    )
+  );
+}
+
+:root {
+  /* Marca */
+  --app-brand: #15803d;
+  --app-brand-strong: #166534;
+  --app-brand-soft: #dcfce7;
+  --app-sidebar: #0c2418;
+  --app-sidebar-hover: rgba(255, 255, 255, 0.06);
+  --app-sidebar-active: rgba(74, 222, 128, 0.14);
+  --app-sidebar-text: #b5c7bb;
+
+  /* Superficies y texto */
+  --app-bg: #f5f7f6;
+  --app-surface: #ffffff;
+  --app-surface-muted: #f9fafb;
+  --app-border: #e7ebe9;
+  --app-border-strong: #d4dbd7;
+  --app-text: #111a15;
+  --app-text-muted: #64706a;
+  --app-text-subtle: #66706b; /* ≥ 4.5:1 sobre todos los fondos (WCAG AA) */
+
+  /* Estados */
+  --app-success: #15803d;
+  --app-success-soft: #ecfdf3;
+  --app-warning: #b45309;
+  --app-warning-soft: #fffbeb;
+  --app-danger: #b91c1c;
+  --app-danger-soft: #fef2f2;
+
+  /* Forma y elevación */
+  --app-radius: 14px;
+  --app-radius-sm: 10px;
+  --app-shadow-sm: 0 1px 2px rgba(16, 24, 20, 0.05);
+  --app-shadow: 0 1px 3px rgba(16, 24, 20, 0.06), 0 1px 2px rgba(16, 24, 20, 0.04);
+  --app-shadow-lg: 0 12px 32px -8px rgba(16, 24, 20, 0.18);
+
+  /* Sobrescribe los colores principales de Material con la marca */
+  --mat-sys-primary: var(--app-brand);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: var(--app-brand-soft);
+  --mat-sys-error: var(--app-danger);
+  --mat-sys-surface: var(--app-surface);
+  --mat-sys-surface-container: var(--app-surface);
+  --mat-sys-surface-container-low: var(--app-surface);
+  --mat-sys-surface-container-high: var(--app-surface-muted);
+  --mat-sys-on-surface: var(--app-text);
+  --mat-sys-on-surface-variant: var(--app-text-muted);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+/* ==========================================================================
+   Utilidades compartidas
+   ========================================================================== */
+
+/* Tonos por categoría: fondo suave + color del ícono */
+.tone-green {
+  --tone-bg: #dcfce7;
+  --tone-fg: #15803d;
+}
+.tone-lime {
+  --tone-bg: #ecfccb;
+  --tone-fg: #4d7c0f;
+}
+.tone-purple {
+  --tone-bg: #f3e8ff;
+  --tone-fg: #7e22ce;
+}
+.tone-slate {
+  --tone-bg: #e2e8f0;
+  --tone-fg: #334155;
+}
+.tone-amber {
+  --tone-bg: #fef3c7;
+  --tone-fg: #b45309;
+}
+.tone-blue {
+  --tone-bg: #dbeafe;
+  --tone-fg: #1d4ed8;
+}
+.tone-gray {
+  --tone-bg: #f1f5f9;
+  --tone-fg: #475569;
+}
+
+/* Ícono dentro de un cuadro de color */
+.icon-tile {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--tone-bg, var(--app-brand-soft));
+  color: var(--tone-fg, var(--app-brand));
+
+  .mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* Insignia (badge) de estado */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.success {
+    background: var(--app-success-soft);
+    color: var(--app-success);
+  }
+  &.warning {
+    background: var(--app-warning-soft);
+    color: var(--app-warning);
+  }
+  &.danger {
+    background: var(--app-danger-soft);
+    color: var(--app-danger);
+  }
+}
+
+/* Etiqueta de categoría */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--tone-bg);
+  color: var(--tone-fg);
+  white-space: nowrap;
+}
+
+/* Código (SKU) */
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: var(--app-text-muted);
+  letter-spacing: 0.01em;
+}
+
+/* Bloques de carga (skeleton) */
+.skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #eef1ef 25%, #f6f8f7 37%, #eef1ef 63%);
+  background-size: 400% 100%;
+  animation: skeleton 1.3s ease infinite;
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Material: ajustes puntuales
+   ========================================================================== */
+
+.mat-mdc-dialog-container .mat-mdc-dialog-title {
+  font-weight: 600;
+}
+
+.mat-mdc-menu-panel {
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow-lg) !important;
+}
+
+/* Snackbars de éxito / error */
+.snack-success {
+  --mat-snack-bar-container-color: #0f2a1c;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #86efac;
+}
+
+.snack-error {
+  --mat-snack-bar-container-color: var(--app-danger);
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+/* Ocultar flechas de inputs numéricos */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}

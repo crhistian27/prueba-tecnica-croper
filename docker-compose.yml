@@ -1,0 +1,68 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: croper-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      # Usuario de la aplicación (mínimo privilegio), creado por mongo/init
+      MONGO_APP_USER: ${MONGO_APP_USER}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+      # Solo desarrollo: permite a la API usar la base de tests e2e
+      MONGO_APP_EXTRA_DBS: ${MONGO_APP_EXTRA_DBS:-}
+    ports:
+      # Solo expuesto en localhost, no en la red (buena práctica de seguridad)
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./backend
+    container_name: croper-api
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # La API NO usa el usuario root: solo readWrite sobre su base
+      MONGO_URI: mongodb://${MONGO_APP_USER}:${MONGO_APP_PASSWORD}@mongo:27017/?authSource=admin
+      MONGO_DB_NAME: ${MONGO_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-3600}
+      # El frontend llama a la API por el proxy de nginx (mismo origen);
+      # CORS solo aplica si se consume la API desde otro origen.
+      CORS_ORIGIN: http://localhost:4200
+      # Las peticiones del frontend llegan a través de nginx (1 proxy)
+      TRUST_PROXY: 1
+    ports:
+      # Solo en localhost: el acceso público es por nginx (puerto 4200).
+      # Evita además que un cliente externo envíe X-Forwarded-For falsos directo a la API.
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: ./frontend
+    container_name: croper-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "4200:80"
+
+volumes:
+  mongo-data:
