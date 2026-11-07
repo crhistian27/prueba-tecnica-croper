@@ -56,7 +56,7 @@ Ninguna medida basta sola; la defensa se hace en capas:
 | Inyección NoSQL (`{"email": {"$gt": ""}}`) | Validar tipos y rechazar campos desconocidos | ✅ DTOs con `class-validator` y `whitelist` + `forbidNonWhitelisted`. Verificado: ambos payloads devuelven `400` |
 | ReDoS / inyección en búsquedas con regex | Escapar la entrada del usuario | ✅ `escapeRegex()` en la búsqueda de productos (con test) |
 | Exposición de datos sensibles | Proyecciones; no devolver campos internos | ✅ `password` con `select: false` y eliminado del JSON |
-| Privilegios excesivos | Usuario de aplicación con mínimo privilegio | ⚠️ **Pendiente:** la API usa el usuario root. En producción: un usuario con rol `readWrite` solo sobre la base `croper` y otro de solo lectura para reportes |
+| Privilegios excesivos | Usuario de aplicación con mínimo privilegio | ✅ La API usa `croper_app`, con rol `readWrite` **solo** sobre `croper`, creado por `mongo/init/01-create-app-user.js`. Verificado: no puede leer otras bases, ver o crear usuarios, borrar la base ni apagar el servidor. El usuario root queda solo para administración |
 | Tráfico interceptado | TLS entre la API y Mongo (`tls=true`) | ⚠️ No aplica en local; obligatorio en la nube |
 | Robo de discos o backups | Cifrado en reposo y backups cifrados | ⚠️ Lo ofrece MongoDB Atlas o el disco cifrado del proveedor |
 | Pérdida de datos | Backups automáticos con restauraciones *probadas*; réplica de 3 nodos | ⚠️ Infraestructura |
@@ -103,6 +103,7 @@ Principio general: **defensa en profundidad y mínimo privilegio en cada capa.**
 | JWT con expiración, algoritmo fijado y secreto validado | Refresh token en cookie `httpOnly` y revocación |
 | Rate limiting por IP real detrás de nginx (5/min en login) | Límite por cuenta y contador compartido en Redis |
 | bcrypt (12), mensajes genéricos, tiempo constante | MFA para administradores |
-| Validación estricta (anti NoSQL injection), regex escapado | Usuario de Mongo con mínimo privilegio y TLS |
+| Validación estricta (anti NoSQL injection), regex escapado | TLS entre la API y Mongo |
+| Usuario de Mongo con mínimo privilegio (`readWrite` solo en su base) | Usuario de solo lectura para reportes |
 | Mongo y API sin exposición pública; usuario no root en la API | Gestor de secretos, WAF, mTLS, escaneo en CI |
 | helmet, cabeceras en nginx, CORS restringido | Swagger protegido o deshabilitado; CSP en el frontend |

@@ -28,6 +28,17 @@ describe('API (e2e)', () => {
     sku: 'E2E-001',
   };
 
+  /**
+   * Limpia los documentos sin borrar la base ni los índices: el usuario de la
+   * API solo tiene `readWrite` (mínimo privilegio), no permisos de dropDatabase.
+   */
+  async function clearDatabase() {
+    const db = app.get<Connection>(getConnectionToken()).db!;
+    for (const collection of await db.collections()) {
+      await collection.deleteMany({});
+    }
+  }
+
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -35,11 +46,11 @@ describe('API (e2e)', () => {
     app = moduleRef.createNestApplication();
     setupApp(app);
     await app.init();
-    await app.get<Connection>(getConnectionToken()).dropDatabase();
+    await clearDatabase();
   });
 
   afterAll(async () => {
-    await app.get<Connection>(getConnectionToken()).dropDatabase();
+    await clearDatabase();
     await app.close();
   });
 

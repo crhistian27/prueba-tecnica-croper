@@ -7,11 +7,17 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DB}
+      # Usuario de la aplicación (mínimo privilegio), creado por mongo/init
+      MONGO_APP_USER: ${MONGO_APP_USER}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+      # Solo desarrollo: permite a la API usar la base de tests e2e
+      MONGO_APP_EXTRA_DBS: ${MONGO_APP_EXTRA_DBS:-}
     ports:
       # Solo expuesto en localhost, no en la red (buena práctica de seguridad)
       - "127.0.0.1:27017:27017"
     volumes:
       - mongo-data:/data/db
+      - ./mongo/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -28,7 +34,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      MONGO_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/?authSource=admin
+      # La API NO usa el usuario root: solo readWrite sobre su base
+      MONGO_URI: mongodb://${MONGO_APP_USER}:${MONGO_APP_PASSWORD}@mongo:27017/?authSource=admin
       MONGO_DB_NAME: ${MONGO_DB}
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-3600}

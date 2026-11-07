@@ -56,6 +56,7 @@ Esto levanta MongoDB, la API (carga datos demo automáticamente) y el frontend.
 - **Cabeceras y CORS:** `helmet` y CORS restringido al origen del frontend.
 - **Búsqueda:** el texto se escapa antes de construir el `RegExp` (evita ReDoS / inyección de regex).
 - **Docker:** build multi-etapa, imagen final solo con dependencias de producción y usuario no-root.
+- **MongoDB con mínimo privilegio:** la API se conecta con `croper_app` (`readWrite` solo sobre su base), creado por `mongo/init/01-create-app-user.js`; el usuario root solo se usa para administración.
 
 ### Desarrollo local (sin Docker para la API)
 
@@ -78,6 +79,7 @@ npm run test:e2e       # e2e contra MongoDB real (BD aislada croper_e2e)
 ## Estructura
 
 ```
+mongo/init/         Script que crea el usuario de la API (mínimo privilegio)
 backend/            API REST NestJS
 frontend/           App Angular
 docs/               Respuestas teóricas y uso de IA
