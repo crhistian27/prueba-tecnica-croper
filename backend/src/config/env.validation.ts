@@ -49,6 +49,17 @@ export class EnvironmentVariables {
   @IsOptional()
   JWT_EXPIRES_IN: number = 3600;
 
+  /**
+   * Cantidad de proxies de confianza delante de la API (ej. 1 = nginx).
+   * Necesario para que el rate limiting use la IP real del cliente y no la del proxy.
+   * 0 = sin proxy (no se confía en X-Forwarded-For, evita que el cliente falsifique su IP).
+   */
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  @IsOptional()
+  TRUST_PROXY: number = 0;
+
   /** Orígenes permitidos por CORS, separados por coma. */
   @IsString()
   @IsOptional()

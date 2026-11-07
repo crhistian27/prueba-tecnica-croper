@@ -35,8 +35,12 @@ services:
       # El frontend llama a la API por el proxy de nginx (mismo origen);
       # CORS solo aplica si se consume la API desde otro origen.
       CORS_ORIGIN: http://localhost:4200
+      # Las peticiones del frontend llegan a través de nginx (1 proxy)
+      TRUST_PROXY: 1
     ports:
-      - "3000:3000"
+      # Solo en localhost: el acceso público es por nginx (puerto 4200).
+      # Evita además que un cliente externo envíe X-Forwarded-For falsos directo a la API.
+      - "127.0.0.1:3000:3000"
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 15s

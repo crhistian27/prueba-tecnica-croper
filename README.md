@@ -23,7 +23,7 @@ Esto levanta MongoDB, la API (carga datos demo automáticamente) y el frontend.
 | Servicio | URL |
 |---|---|
 | **Aplicación web** | **http://localhost:4200** |
-| API | http://localhost:3000/api |
+| API (directa, solo localhost) | http://localhost:3000/api |
 | Swagger | http://localhost:3000/api/docs |
 | Health | http://localhost:3000/api/health |
 
@@ -52,7 +52,7 @@ Esto levanta MongoDB, la API (carga datos demo automáticamente) y el frontend.
 - **Validación:** DTOs con `class-validator`; `ValidationPipe` con `whitelist` + `forbidNonWhitelisted` (rechaza campos extra, mitiga inyección de operadores `$` de MongoDB). Variables de entorno validadas al arrancar.
 - **Errores uniformes:** filtro global → `{ statusCode, error, message, path, timestamp }`; SKU duplicado → 409, id inválido → 400, inexistente → 404; los errores 500 no exponen detalles.
 - **Contraseñas:** bcrypt (12 rondas), `select: false` en el schema y eliminadas del JSON. Login con mensaje genérico y comparación contra hash ficticio para no revelar si el email existe.
-- **Fuerza bruta:** `@nestjs/throttler` (100 req/min general, 5/min en login y registro).
+- **Fuerza bruta:** `@nestjs/throttler` (100 req/min general, 5/min en login y registro), usando la IP real del cliente detrás de nginx (`TRUST_PROXY`).
 - **Cabeceras y CORS:** `helmet` y CORS restringido al origen del frontend.
 - **Búsqueda:** el texto se escapa antes de construir el `RegExp` (evita ReDoS / inyección de regex).
 - **Docker:** build multi-etapa, imagen final solo con dependencias de producción y usuario no-root.

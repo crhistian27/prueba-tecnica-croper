@@ -10,6 +10,17 @@ import helmet from 'helmet';
 export function setupApp(app: INestApplication): void {
   const config = app.get(ConfigService);
 
+  // Detrás de nginx, req.ip sería siempre la IP del proxy y el rate limiting
+  // bloquearía a todos los usuarios a la vez. Se confía solo en N saltos.
+  const trustProxy = config.getOrThrow<number>('TRUST_PROXY');
+  if (trustProxy > 0) {
+    (
+      app.getHttpAdapter().getInstance() as {
+        set: (k: string, v: number) => void;
+      }
+    ).set('trust proxy', trustProxy);
+  }
+
   app.setGlobalPrefix('api');
   app.use(helmet());
   app.enableCors({

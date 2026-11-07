@@ -42,6 +42,11 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 - **Resultado:** layout tipo panel con menú lateral, tarjetas de indicadores (nuevo endpoint `GET /products/stats`), tabla con íconos por categoría y estado de stock, login en dos columnas, diálogo por secciones y sistema de diseño propio.
 - **Validación:** revisión visual en el navegador en escritorio y en un iframe de 390 px para la vista móvil; test e2e del nuevo endpoint.
 
+### 6. Ejercicio 5 – Seguridad
+- **Prompt:** "Sí, el 5."
+- **Resultado:** `docs/ejercicio-5-seguridad.md`, con cada respuesta ligada a lo implementado y una lista honesta de lo pendiente para producción.
+- **Validación:** antes de afirmar cada medida se verificó en el código (grep) y contra la API en ejecución (payloads de inyección NoSQL → 400, prueba de rate limiting con dos clientes distintos).
+
 ## Correcciones y validaciones destacadas
 
 | Problema detectado | Causa | Corrección |
@@ -57,3 +62,4 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 | El símbolo `$` del campo precio se superponía a la etiqueta | `matTextPrefix` visible antes de que la etiqueta flote | Eliminado el prefijo (la etiqueta ya indica "COP") |
 | El build fallaba al no poder descargar Google Fonts | Angular intenta incrustar el CSS de las fuentes en producción, lo que hace depender el build de internet | Desactivar `optimization.fonts` para que el build (y el de Docker) sea reproducible |
 | Rango de paginación duplicado y filtro de categoría truncado | Detectado en la revisión visual | Ocultar el rango del paginador y ampliar el filtro |
+| Detrás de nginx, 5 logins fallidos de **cualquier** usuario bloqueaban el login de **todos** | Express veía siempre la IP del proxy, así que el rate limiting se aplicaba a una sola IP compartida | `trust proxy` configurable (`TRUST_PROXY=1`) y puerto de la API solo en `localhost`. Verificado: un cliente bloqueado no se libera falsificando `X-Forwarded-For` y otro cliente no queda afectado |
