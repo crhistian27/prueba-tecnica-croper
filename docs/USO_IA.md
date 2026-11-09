@@ -61,7 +61,7 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 
 ### 8. Ejercicio 3 – Arquitectura de microservicios
 - **Prompt:** "Paso 3."
-- **Resultado:** `docs/ejercicio-3-arquitectura.md`: requisitos derivados del contexto agro, recomendación de evolución gradual desde un monolito modular, 11 servicios con su justificación, comunicación (saga orquestada, outbox, idempotencia), datos, seguridad, operación, trade-offs y plan por fases, con 2 diagramas Mermaid.
+- **Resultado:** `docs/ejercicio-3-arquitectura.md`: requisitos derivados del contexto agro, recomendación de evolución gradual desde un monolito modular, 7 servicios con su justificación, comunicación (saga orquestada, outbox, idempotencia), datos, seguridad, operación, trade-offs y plan por fases, con un diagrama Mermaid. Después se resumió para que fuera más corto y directo.
 - **Validación y ajustes propios:**
   - Los diagramas se renderizaron con mermaid-cli para validar la sintaxis **y revisarlos visualmente**. El primero era técnicamente válido pero ilegible (flechas cruzadas y etiquetas superpuestas), así que se rediseñó por capas.
   - Los supuestos de negocio quedaron explícitos en lugar de presentarse como hechos sobre la empresa.
