@@ -13,7 +13,7 @@ Panel de gestión de productos para un e-commerce agropecuario: **API REST en Ne
 | 3 | Arquitectura de microservicios para e-commerce agro | [`docs/ejercicio-3-arquitectura.md`](docs/ejercicio-3-arquitectura.md) |
 | 4 | Optimización de rendimiento web en móviles (con mediciones) | [`docs/ejercicio-4-rendimiento.md`](docs/ejercicio-4-rendimiento.md) |
 | 5 | Seguridad en APIs y cloud | [`docs/ejercicio-5-seguridad.md`](docs/ejercicio-5-seguridad.md) |
-| — | **PDF con las respuestas teóricas y el uso de IA** | [`docs/Respuestas_Teoricas_Croper.pdf`](docs/Respuestas_Teoricas_Croper.pdf) |
+| — | **PDF con las respuestas teóricas** (2 versiones) | **Corto (1 hoja):** [`docs/Respuestas_Cortas_Croper.pdf`](docs/Respuestas_Cortas_Croper.pdf)<br/>**Largo (completo, con uso de IA):** [`docs/Respuestas_Teoricas_Croper.pdf`](docs/Respuestas_Teoricas_Croper.pdf) |
 | — | Uso de inteligencia artificial: prompts, validación y correcciones | [`docs/USO_IA.md`](docs/USO_IA.md) |
 
 ## Inicio rápido
