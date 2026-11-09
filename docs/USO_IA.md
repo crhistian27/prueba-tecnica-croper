@@ -51,30 +51,29 @@ Formato de cada entrada: qué se pidió, qué generó la IA, cómo se validó y 
 
 ### 6. Ejercicio 5 – Seguridad
 - **Prompt:** "Sí, el 5."
-- **Resultado:** `docs/ejercicio-5-seguridad.md`, con cada respuesta ligada a lo implementado y una lista honesta de lo pendiente para producción.
+- **Resultado:** `docs/ejercicio-5-seguridad.md`, con respuestas cortas ligadas a lo implementado.
 - **Validación:** antes de afirmar cada medida se verificó en el código (grep) y contra la API en ejecución (payloads de inyección NoSQL → 400, prueba de rate limiting con dos clientes distintos).
 
 ### 7. Ejercicio 4 – Rendimiento
 - **Prompt:** "Paso 4."
-- **Resultado:** se midió la app con Lighthouse en perfil móvil, se aplicaron las optimizaciones que la medición señaló (subconjunto de íconos, fuentes auto-alojadas, cadena de chunks más corta, app shell, contraste) y se documentó en `docs/ejercicio-4-rendimiento.md`.
+- **Resultado:** se midió la app con Lighthouse en perfil móvil, se aplicaron las optimizaciones que la medición señaló (subconjunto de íconos, fuentes auto-alojadas, cadena de chunks más corta, app shell, contraste) y se resumió en `docs/ejercicio-4-rendimiento.md`.
 - **Validación:** comparación A/B contra la versión anterior (construida desde el commit previo), con caché vacía, throttling real y mediana de varias ejecuciones; revisión visual de los íconos tras cambiar la fuente.
 
 ### 8. Ejercicio 3 – Arquitectura de microservicios
 - **Prompt:** "Paso 3."
-- **Resultado:** `docs/ejercicio-3-arquitectura.md`: requisitos derivados del contexto agro, recomendación de evolución gradual desde un monolito modular, 7 servicios con su justificación, comunicación (saga orquestada, outbox, idempotencia), datos, seguridad, operación, trade-offs y plan por fases, con un diagrama Mermaid. Después se resumió para que fuera más corto y directo.
+- **Resultado:** `docs/ejercicio-3-arquitectura.md`: monolito modular como punto de partida, 7 servicios, comunicación por REST y eventos, y el flujo de compra. Se dejó en versión corta, solo lo básico.
 - **Validación y ajustes propios:**
-  - Los diagramas se renderizaron con mermaid-cli para validar la sintaxis **y revisarlos visualmente**. El primero era técnicamente válido pero ilegible (flechas cruzadas y etiquetas superpuestas), así que se rediseñó por capas.
-  - Los supuestos de negocio quedaron explícitos en lugar de presentarse como hechos sobre la empresa.
+  - Se recortó a lo esencial para no presentar un diseño exagerado.
 
 ### 9. Entrega (Paso 6)
 - **Prompt:** "Sí, seguimos" (README final, PDF y revisión antes de entregar).
 - **Resultado:**
   - README como portada del proyecto, con capturas generadas automáticamente.
-  - PDF generado desde los mismos Markdown con `docs/tools/build-pdf.mjs`.
+  - PDF de una hoja con las respuestas teóricas (`docs/Respuestas_Cortas_Croper.pdf`).
 - **Validación:**
   - Se clonó el repositorio en una carpeta limpia y se levantó solo con `cp .env.example .env` y `docker compose up -d`: frontend, Swagger, login demo, 32 productos y usuario de MongoDB con mínimo privilegio.
   - Se revisó el historial de git buscando secretos reales (ninguno).
-  - Se revisó el PDF página por página: se corrigieron una página casi vacía antes del diagrama, un enlace sobrante y un símbolo mal renderizado.
+  - Se revisó el PDF visualmente para confirmar que cabe en una sola hoja.
 
 ## Correcciones y validaciones destacadas
 

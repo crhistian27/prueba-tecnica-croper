@@ -13,7 +13,7 @@ Panel de gestión de productos para un e-commerce agropecuario: **API REST en Ne
 | 3 | Arquitectura de microservicios para e-commerce agro | [`docs/ejercicio-3-arquitectura.md`](docs/ejercicio-3-arquitectura.md) |
 | 4 | Optimización de rendimiento web en móviles (con mediciones) | [`docs/ejercicio-4-rendimiento.md`](docs/ejercicio-4-rendimiento.md) |
 | 5 | Seguridad en APIs y cloud | [`docs/ejercicio-5-seguridad.md`](docs/ejercicio-5-seguridad.md) |
-| — | **PDF con las respuestas teóricas** (2 versiones) | **Corto (1 hoja):** [`docs/Respuestas_Cortas_Croper.pdf`](docs/Respuestas_Cortas_Croper.pdf)<br/>**Largo (completo, con uso de IA):** [`docs/Respuestas_Teoricas_Croper.pdf`](docs/Respuestas_Teoricas_Croper.pdf) |
+| — | **PDF con las respuestas teóricas (1 hoja)** | [`docs/Respuestas_Cortas_Croper.pdf`](docs/Respuestas_Cortas_Croper.pdf) |
 | — | Uso de inteligencia artificial: prompts, validación y correcciones | [`docs/USO_IA.md`](docs/USO_IA.md) |
 
 ## Inicio rápido
@@ -70,7 +70,7 @@ En el primer arranque se crean los usuarios de MongoDB y se cargan datos de demo
 backend/            API REST NestJS
 frontend/           App Angular (+ nginx.conf para producción)
 mongo/init/         Script que crea el usuario de la API con mínimo privilegio
-docs/               Respuestas teóricas, PDF, uso de IA, diagramas y capturas
+docs/               Respuestas teóricas cortas, PDF de una hoja, uso de IA y capturas
 docker-compose.yml  Orquestación de los 3 servicios
 ```
 
@@ -162,7 +162,7 @@ src/app/
 
 ### Rendimiento
 
-Detalle y mediciones en [`docs/ejercicio-4-rendimiento.md`](docs/ejercicio-4-rendimiento.md). Lighthouse móvil, 4G lento, caché vacía:
+Lighthouse móvil, 4G lento, caché vacía:
 
 - **FCP 4–5 s → 0,7 s** con un *app shell* en `index.html`.
 - **−40/45 % de peso** por página: íconos en subconjunto auto-alojado (170 KB → 5,9 KB, `npm run icons`) e Inter auto-alojada.
